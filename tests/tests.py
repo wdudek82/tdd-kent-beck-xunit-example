@@ -1,12 +1,29 @@
-from app.main import WasRun, TestCase
+from app.main import WasRun, TestCase, TestResult
 
 
 class TestCaseTest(TestCase):
-    def test_running(self):
+    def test_template_method(self):
         test = WasRun("test_method")
-        assert not test.was_run
         test.run()
-        assert test.was_run
+        assert "set_up test_method tear_down " == test.log
+
+    def test_result(self):
+        test = WasRun("test_method")
+        result = test.run()
+        assert "1 run, 0 failed" == result.summary()
+
+    def test_failed_result(self):
+        test = WasRun("test_broken_method")
+        result = test.run()
+        assert "1 run, 1 failed", result.summary
+
+    def test_failed_result_formatting(self):
+        result = TestResult()
+        result.test_started()
+        result.test_failed()
+        assert "1 run, 1 failed" == result.summary()
 
 
-TestCaseTest("test_running").run()
+TestCaseTest("test_template_method").run()
+TestCaseTest("test_result").run()
+TestCaseTest("test_failed_result").run()
